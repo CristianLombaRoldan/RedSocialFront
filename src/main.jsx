@@ -5,7 +5,11 @@ import { AuthProvider } from "./context/AuthContext";
 import App from "./App";
 
 
+
+
 const queryClient = new QueryClient();
+
+
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(

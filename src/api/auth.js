@@ -1,6 +1,8 @@
 import { apiFetch } from "./client";
 
 
+
+
 /**
  * Registra un nuevo usuario.
  * @param {{username: string, password: string }} data
@@ -13,10 +15,13 @@ export function registerUser(data) {
 }
 
 
+
+
 /**
  * Inicia sesión y obtiene el token JWT.
  * @param {{ username: string, password: string }} data
  */
+
 
 export function loginUser(data) {
   return apiFetch("/auth/login", {
@@ -24,3 +29,7 @@ export function loginUser(data) {
     body: JSON.stringify(data),
   });
 }
+
+
+
+

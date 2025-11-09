@@ -2,6 +2,9 @@
 // Aquí configuramos la navegación general de la app.
 // Dependemos del contexto de autenticación para saber si el usuario tiene token.
 
+
+
+
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/useAuth";
 import LoginForm from "./components/LoginForm";
@@ -11,8 +14,14 @@ import AllPublicationsPage from "./pages/AllPublicationsPage";
 import MyProfilePage from "./pages/MyProfilePage";
 import ProfilePage from "./pages/ProfilePage";
 
+
+
+
 export default function App() {
   const { isAuthenticated } = useAuth();
+
+
+
 
   return (
     <Router>
@@ -40,6 +49,9 @@ export default function App() {
   );
 }
 
+
+
+
 /**
  * Página inicial cuando no hay sesión iniciada.
  * Muestra login y registro.
@@ -54,3 +66,4 @@ function AuthPage() {
     </main>
   );
 }
+

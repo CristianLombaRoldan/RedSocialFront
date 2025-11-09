@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../api/client";
 
+
+
+
 /**
  * Hook personalizado para manejar paginación con React Query y Spring Data.
  *
@@ -21,6 +24,9 @@ import { apiFetch } from "../api/client";
 export function usePagination(endpoint, pageSize = 5) {
   const [page, setPage] = useState(0);
 
+
+
+
   // Consulta React Query: se actualiza automáticamente al cambiar de página
   const {
     data,
@@ -33,17 +39,29 @@ export function usePagination(endpoint, pageSize = 5) {
     keepPreviousData: true, // mantiene la página anterior mientras carga la nueva
   });
 
+
+
+
   // Si no hay datos aún, devolvemos valores por defecto
   const items = data?.content || [];
   const totalPages = data?.totalPages || 1;
+
+
+
 
   const nextPage = () => {
     if (page < totalPages - 1) setPage((p) => p + 1);
   };
 
+
+
+
   const prevPage = () => {
     if (page > 0) setPage((p) => p - 1);
   };
+
+
+
 
   return { items, page, totalPages, isLoading, isError, error, nextPage, prevPage };
 }
