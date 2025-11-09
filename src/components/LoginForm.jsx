@@ -14,9 +14,10 @@ export default function LoginForm() {
     mutationFn: loginUser,
     onSuccess: (data) => {
       // Suponemos que la API devuelve { token, user }
-      login(data.access_token, data.user);
+      login(data.access_token, { username: data.username });
     },
   });
+
 
 
   const handleSubmit = (e) => {
