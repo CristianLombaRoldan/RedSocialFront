@@ -1,22 +1,17 @@
-import { useParams } from "react-router-dom";
+// src/pages/ProfilePage.jsx
 import Header from "../components/Header";
-import ProfilePublications from "../components/ProfilePublications";
+import ProfilePublication from "../components/ProfilePublication";
 import UserProfile from "../components/UserProfile";
 
-export default function ProfilePage() {
-  const { name } = useParams();
 
+export default function ProfilePage() {
   return (
     <>
       <Header />
       <main style={{ padding: 20 }}>
-        <h3>Perfil de {name}</h3>
-        <UserProfile/>
-        <h4>Publicaciones</h4>
-        <ProfilePublications />
+        <UserProfile />
+        <ProfilePublication />
       </main>
     </>
   );
 }
-
-

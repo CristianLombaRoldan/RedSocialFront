@@ -2,11 +2,10 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 
 
-
-
 export default function GetPublication({ authorName, text, createDate }) {
   const { user } = useAuth();
   const navigate = useNavigate();
+
 
   return (
     <div
@@ -30,17 +29,9 @@ export default function GetPublication({ authorName, text, createDate }) {
       <p>{text}</p>
 
 
-
-
       {user?.username === authorName && (
         <button style={{ color: "red" }}>Borrar publicación</button>
       )}
     </div>
   );
 }
-
-
-
-
-
-

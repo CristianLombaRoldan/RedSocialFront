@@ -4,11 +4,15 @@ import { useParams } from "react-router-dom";
 import { apiFetch } from "../api/client";
 
 
+
+
 export default function UserProfile() {
   const { name } = useParams(); // toma el nombre de la URL
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+
 
 
   useEffect(() => {
@@ -26,9 +30,13 @@ export default function UserProfile() {
   }, [name]);
 
 
+
+
   if (loading) return <p>Cargando perfil...</p>;
   if (error) return <p style={{ color: "red" }}>Error: {error.message}</p>;
   if (!profile) return <p>No se encontró el perfil del usuario.</p>;
+
+
 
 
   return (

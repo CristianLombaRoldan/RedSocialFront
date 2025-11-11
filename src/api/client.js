@@ -23,14 +23,17 @@ export async function apiFetch(url, options = {}) {
   //      - Content-Type: application/json (ya que no usamos archivos)
   //      - Authorization: Bearer <token> si el usuario está logueado
   //      - Headers personalizados que puedan venir en 'options'
+  
   const headers = {
     ...(options.headers || {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
+
   // Solo añadimos Content-Type cuando hay body para evitar preflight en GET
   if (options.body && !headers["Content-Type"]) {
     headers["Content-Type"] = "application/json";
   }
+
   const config = { ...options, headers };
 
 
@@ -45,9 +48,6 @@ export async function apiFetch(url, options = {}) {
     window.location.replace('/');
     throw new Error('Sesión expirada');
   }
-
-
- 
 
 
   // 5) Si la respuesta tiene error (4xx o 5xx), intentamos mostrar un mensaje claro.
@@ -71,7 +71,3 @@ export async function apiFetch(url, options = {}) {
   const text = await res.text();
   return text ? JSON.parse(text) : null;
 }
-
-
-
-
