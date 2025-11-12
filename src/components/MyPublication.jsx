@@ -27,6 +27,7 @@ export default function MyPublication() {
       .map((pub) => (
         <GetPublication
           key={pub.id}
+          id={pub.id}
           authorName={pub.username}
           text={pub.text}
           createDate={pub.createDate}

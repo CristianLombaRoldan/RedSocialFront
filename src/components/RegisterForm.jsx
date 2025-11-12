@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "../api/auth";
+import { Link } from "react-router-dom";
 
 
 export default function RegisterForm() {
@@ -24,7 +25,10 @@ export default function RegisterForm() {
 
 
   return (
+    
+    <main style={{ maxWidth: 500, margin: "40px auto" }}>
     <form onSubmit={handleSubmit}>
+      <h2>Bienvenida a MiniRed</h2>
       <h3>Registro</h3>
 
 
@@ -61,5 +65,8 @@ export default function RegisterForm() {
         <p style={{ color: "green" }}>Registro completado con éxito</p>
       )}
     </form>
+
+    <p>¿Ya tienes cuenta? <Link to="/"> Logeate </Link></p>
+    </main>
   );
 }

@@ -25,11 +25,14 @@ export default function PublicationList() {
       .map((pub) => (
         <GetPublication
           key={pub.id}
+          id={pub.id}
           authorName={pub.username}
           text={pub.text}
           createDate={pub.createDate}
         />
-      ))}
+        )
+       
+      )}
 
 
       <div style={{ marginTop: "20px" }}>

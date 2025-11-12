@@ -23,8 +23,10 @@ export default function App() {
         {!isAuthenticated ? (
           <>
             <Route path="/" element={<AuthPage />} />
+            <Route path="/register" element={<RegisterForm/>}/>
             {/* Cualquier otra ruta redirige a login */}
             <Route path="*" element={<Navigate to="/" />} />
+            
           </>
         ) : (
           <>
@@ -52,8 +54,7 @@ function AuthPage() {
     <main style={{ maxWidth: 500, margin: "40px auto" }}>
       <h2>Bienvenida a MiniRed</h2>
       <LoginForm />
-      <hr />
-      <RegisterForm />
+     
     </main>
   );
 }

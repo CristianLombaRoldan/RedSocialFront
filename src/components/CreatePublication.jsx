@@ -3,6 +3,13 @@ import { useAuth } from "../context/useAuth";
 import { apiFetch } from "../api/client";
 import { useQueryClient } from "@tanstack/react-query"; // ✅ IMPORTANTE
 
+
+/**
+ * Componente para crear una nueva publicación.
+ * 
+ * @returns {JSX.Element} Un formulario para crear una nueva publicación.
+ */
+
 export default function CreatePublication() {  // ya NO necesitas onNewPublication
   const { user } = useAuth();
   const [text, setText] = useState("");
