@@ -4,10 +4,12 @@ import { apiFetch } from "../api/client";
 import { useQueryClient } from "@tanstack/react-query"; // ✅ IMPORTANTE
 
 
+
+
 /**
- * Componente para crear una nueva publicación.
+ * Componente que permite crear una nueva publicación.
  * 
- * @returns {JSX.Element} Un formulario para crear una nueva publicación.
+ * @returns {JSX.Element} Componente que contiene un formulario para crear una publicación.
  */
 
 export default function CreatePublication() {  // ya NO necesitas onNewPublication
@@ -15,13 +17,23 @@ export default function CreatePublication() {  // ya NO necesitas onNewPublicati
   const [text, setText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
-
-  const queryClient = useQueryClient(); // ✅
+  // Usamos useQueryClient para invalidar el listado de publicaciones
+  const queryClient = useQueryClient();
 
   if (!user) {
     return <p>Debes estar logueado para crear una publicación.</p>;
   }
 
+/**
+ * Función que se encarga de crear una nueva publicación.
+ * 
+ * Primero, evita que el formulario se envíe.
+ * Luego, verifica si el texto de la publicación no está vacío.
+ * Si no lo está, intenta crear la publicación con la API.
+ * Si la creación es exitosa, invalida el listado de publicaciones para que se recargue automáticamente.
+ * Si ocurre un error, muestra un mensaje de error.
+ * Finalmente, siempre que termine la función, se asegura de que el formulario no esté en estado de envío.
+ */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -41,7 +53,7 @@ export default function CreatePublication() {  // ya NO necesitas onNewPublicati
 
       setText("");
 
-      // ✅ recarga automática de la lista
+      // Invalida el listado de publicaciones para recargar automática de la lista
       queryClient.invalidateQueries(["/publications/"]);
 
     } catch (err) {

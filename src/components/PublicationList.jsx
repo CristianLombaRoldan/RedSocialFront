@@ -2,6 +2,17 @@ import { usePagination } from "../hooks/usePagination";
 import GetPublication from "./GetPublication";
 
 
+
+/**
+ * Componente que muestra una lista de publicaciones.
+ * Utiliza el hook usePagination para obtener las publicaciones.
+ * Muestra un título con la página actual y el número total de páginas.
+ * Si no hay publicaciones, muestra un mensaje de no hay publicaciones disponibles.
+ * Cada publicación se muestra con un componente GetPublication.
+ * Al final de la lista de publicaciones, se muestra un botón para ir a la página anterior o siguiente.
+ * @returns {JSX.Element} Componente que muestra una lista de publicaciones.
+ */
+
 export default function PublicationList() {
   const { items, page, totalPages, isLoading, isError, error, nextPage, prevPage } =
     usePagination("/publications/", 5); // endpoint y tamaño de página

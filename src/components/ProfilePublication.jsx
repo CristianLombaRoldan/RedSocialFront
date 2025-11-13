@@ -3,6 +3,17 @@ import { usePagination } from "../hooks/usePagination";
 import GetPublication from "./GetPublication";
 
 
+
+/**
+ * Componente que muestra las publicaciones de un usuario.
+ * Muestra un título con la página actual y el número total de páginas.
+ * Si no hay publicaciones, muestra un mensaje de no hay publicaciones disponibles.
+ * Cada publicación se muestra con un componente GetPublication.
+ * Al final de la lista de publicaciones, se muestra un botón para ir a la página anterior o siguiente.
+ * @param {string} name - nombre del usuario cuyas publicaciones se quieren mostrar.
+ * @returns {JSX.Element} Componente que muestra las publicaciones de un usuario.
+ */
+
 export default function MyPublication() {
     const { name } = useParams();
     const { items, page, totalPages, isLoading, isError, error, nextPage, prevPage } =

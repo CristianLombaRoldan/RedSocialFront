@@ -3,6 +3,13 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 
 
+
+/**
+ * Componente que renderiza el header de la aplicación.
+ * Muestra el nombre de la red, enlaces de navegación y el usuario logueado.
+ * @returns {JSX.Element} Componente que contiene el header de la aplicación.
+ */
+
 export default function Header() {
   const { user, logout } = useAuth();
 
@@ -18,7 +25,7 @@ export default function Header() {
       }}
     >
       {/* Izquierda: nombre de la red */}
-      <h2 style={{ margin: 0 }}>MiniRed</h2>
+      <h2 style={{ margin: 0 }}>Círculo</h2>
 
 
       {/* Centro: enlaces de navegación */}
