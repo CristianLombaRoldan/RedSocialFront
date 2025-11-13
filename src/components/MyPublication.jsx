@@ -3,6 +3,13 @@ import { usePagination } from "../hooks/usePagination";
 import GetPublication from "./GetPublication";
 
 
+
+/**
+ * Componente que muestra las publicaciones del usuario logueado.
+ * 
+ * @returns {JSX.Element} Componente que muestra las publicaciones del usuario.
+ */
+
 export default function MyPublication() {
     const { user } = useAuth();
     const { items, page, totalPages, isLoading, isError, error, nextPage, prevPage } =
@@ -20,9 +27,9 @@ export default function MyPublication() {
 
       {items.length === 0 && <p>No hay publicaciones disponibles.</p>}
 
-
-      {items
-      .slice() // hacemos copia del array
+      
+      {items // Ordenamos las publicaciones por fecha de creación
+      .slice() 
       .sort((a, b) => new Date(b.createDate) - new Date(a.createDate)) // más reciente primero
       .map((pub) => (
         <GetPublication

@@ -3,13 +3,25 @@ import { useEffect, useState } from "react";
 import { apiFetch } from "../api/client";
 import { useAuth } from "../context/useAuth";
 
+
+/**
+ * Componente que renderiza el perfil del usuario logueado.
+ * Muestra el nombre del usuario, correo electrónico y descripción.
+ * Incluye un botón para cambiar el nombre de usuario.
+ * Si el usuario hace click en el botón, se muestra un formulario para cambiar el nombre de usuario.
+ * Si se introduce un nombre de usuario válido, se envía una petición para cambiar el nombre de usuario.
+ * Si la petición es exitosa, se muestra un mensaje de éxito y se redirige al login.
+ * Si la petición falla, se muestra un mensaje de error.
+ * @returns {JSX.Element} Componente que renderiza el perfil del usuario logueado.
+ */
+
 export default function MyUserProfile() {
   const { user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // ✅ estado para mostrar/ocultar formulario
+  // estado para mostrar/ocultar formulario
   const [showForm, setShowForm] = useState(false);
 
   const [newUsername, setNewUsername] = useState("");
@@ -18,6 +30,15 @@ export default function MyUserProfile() {
   const [redirectMessage, setRedirectMessage] = useState("");
 
   useEffect(() => {
+
+/**
+ * Carga el perfil del usuario actual.
+ * Si el usuario no tiene un nombre de usuario, sale inmediatamente.
+ * Si hay un error al cargar el perfil, se muestra el mensaje de error.
+ * Si se carga con éxito, se muestra el perfil.
+ * Se utiliza finally para asegurar que se termina de cargar el perfil aunque haya un error.
+ */
+
     async function loadProfile() {
       if (!user?.username) {
         setLoading(false);
@@ -36,6 +57,15 @@ export default function MyUserProfile() {
     }
     loadProfile();
   }, [user.username]);
+
+
+/**
+ * Función que se encarga de cambiar el nombre de usuario del usuario actual.
+ * Se encarga de validar que el nuevo nombre de usuario no esté vacío y sea diferente al actual.
+ * Si se introduce un nombre de usuario válido, se envía una petición para cambiar el nombre de usuario.
+ * Si la petición es exitosa, se muestra un mensaje de éxito y se redirige al login.
+ * Si la petición falla, se muestra un mensaje de error.
+ */
 
   const handleChangeUsername = async (e) => {
     e.preventDefault();
@@ -93,7 +123,7 @@ export default function MyUserProfile() {
 
       <hr style={{ margin: "30px 0" }} />
 
-      {/* ✅ Botón para mostrar/ocultar formulario */}
+      {/*  Botón para mostrar/ocultar formulario */}
       <button
         onClick={() => setShowForm(!showForm)}
         style={{
@@ -108,7 +138,7 @@ export default function MyUserProfile() {
         {showForm ? "Cancelar" : "Cambiar nombre de usuario"}
       </button>
 
-      {/* ✅ El formulario solo aparece si showForm es true */}
+      {/*  El formulario solo aparece si showForm es true */}
       {showForm && (
         <form onSubmit={handleChangeUsername} style={{ marginTop: "20px" }}>
           <h3 style={{ marginBottom: "15px" }}>Cambiar nombre de usuario</h3>

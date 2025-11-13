@@ -52,7 +52,7 @@ export default function App() {
 function AuthPage() {
   return (
     <main style={{ maxWidth: 500, margin: "40px auto" }}>
-      <h2>Bienvenida a MiniRed</h2>
+      <h2>Bienvenid@ a Círculo</h2>
       <LoginForm />
      
     </main>

@@ -6,6 +6,18 @@ import { apiFetch } from "../api/client";
 
 
 
+
+/**
+ * Componente que muestra el perfil del usuario.
+ * Muestra el nombre del usuario, correo electrónico y descripción.
+ * Si el usuario no tiene un nombre de usuario, sale inmediatamente.
+ * Si hay un error al cargar el perfil, se muestra el mensaje de error.
+ * Si se carga con éxito, se muestra el perfil.
+ * Se utiliza finally para asegurar que se termina de cargar el Perfil aunque haya un error.
+ * @param {string} name - nombre del usuario cuyo perfil se quieren mostrar.
+ * @returns {JSX.Element} Componente que muestra el perfil del usuario.
+ */
+
 export default function UserProfile() {
   const { name } = useParams(); // toma el nombre de la URL
   const [profile, setProfile] = useState(null);
@@ -16,6 +28,14 @@ export default function UserProfile() {
 
 
   useEffect(() => {
+
+/**
+ * Carga el perfil del usuario actual.
+ * Si el usuario no tiene un nombre de usuario, sale inmediatamente.
+ * Si hay un error al cargar el Perfil, se muestra el mensaje de error.
+ * Si se carga con éxito, se muestra el Perfil.
+ * Se utiliza finally para asegurar que se termina de cargar el Perfil aunque haya un error.
+**/
     async function loadProfile() {
       try {
         const data = await apiFetch(`/users/public/${name}`);

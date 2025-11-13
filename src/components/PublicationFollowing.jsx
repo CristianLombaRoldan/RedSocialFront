@@ -2,6 +2,15 @@ import { usePagination } from "../hooks/usePagination";
 import GetPublication from "./GetPublication";
 
 
+
+/**
+ * Componente que muestra las publicaciones de los usuarios que seguimos.
+ * Muestra la lista de publicaciones, con botones para navegar entre ellas.
+ * Si no hay publicaciones, muestra un mensaje indicando que no hay publicaciones.
+ * Si hay un error al cargar las publicaciones, muestra un mensaje con el error.
+ * @returns {JSX.Element} Componente que muestra las publicaciones de los usuarios que seguimos.
+ */
+
 export default function PublicationFollowing() {
   const { items, page, totalPages, isLoading, isError, error, nextPage, prevPage } =
     usePagination("/publications/following", 5); // endpoint y tamaño de página
