@@ -1,0 +1,136 @@
+/* ================================
+   PALETA DE COLORES – CORAL POP
+   ================================ */
+:root {
+  --color-bg: #FFF8F6;
+  --color-text: #2A2A2A;
+
+  --color-primary: #FB7185;        /* Coral suave */
+  --color-primary-dark: #E11D48;   /* Coral intenso */
+  --color-secondary: #FDA4AF;      /* Coral pastel */
+  --color-border: #FFE4E6;
+
+  --color-card-bg: #ffffff;
+}
+
+/* ================================
+   ESTILOS GENERALES
+   ================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+/* ================================
+   CABECERA
+   ================================ */
+header {
+  background-color: var(--color-card-bg);
+  border-bottom: 2px solid var(--color-border);
+  padding: 12px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h2 {
+  color: var(--color-primary-dark);
+  font-weight: 700;
+}
+
+header nav a {
+  text-decoration: none;
+  color: var(--color-primary-dark);
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+header nav a:hover {
+  color: var(--color-primary);
+}
+
+/* ================================
+   BOTONES
+   ================================ */
+
+button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-weight: 600;
+}
+
+button:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* Botones de peligro (Eliminar) */
+button.danger {
+  background-color: #dc2626;
+}
+
+button.danger:hover {
+  background-color: #b91c1c;
+}
+
+/* ================================
+   INPUTS Y FORMULARIOS
+   ================================ */
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid var(--color-border);
+  border-radius: 6px;
+  background-color: #fff;
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+/* ================================
+   CARDS
+   ================================ */
+.card {
+  background-color: var(--color-card-bg);
+  border: 2px solid var(--color-border);
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 8px rgba(255, 182, 193, 0.15);
+}
+
+/* ================================
+   LINKS GENERALES
+   ================================ */
+a {
+  color: var(--color-primary-dark);
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+a:hover {
+  color: var(--color-primary);
+}
+
+/* ================================
+   TITULOS
+   ================================ */
+h1, h2, h3, h4 {
+  color: var(--color-primary-dark);
+}
