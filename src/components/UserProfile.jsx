@@ -1,79 +1,194 @@
-// src/components/UserProfile.jsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { apiFetch } from "../api/client";
-
-
-
-
+import UserListModal from "./UserListModal";
+import "../social.css";
+import { useAuth } from "../context/useAuth";
 
 /**
- * Componente que muestra el perfil del usuario.
- * Muestra el nombre del usuario, correo electrónico y descripción.
- * Si el usuario no tiene un nombre de usuario, sale inmediatamente.
- * Si hay un error al cargar el perfil, se muestra el mensaje de error.
- * Si se carga con éxito, se muestra el perfil.
- * Se utiliza finally para asegurar que se termina de cargar el Perfil aunque haya un error.
- * @param {string} name - nombre del usuario cuyo perfil se quieren mostrar.
- * @returns {JSX.Element} Componente que muestra el perfil del usuario.
+ * Página de perfil de un usuario (público).
+ *
+ * Funciones principales:
+ * - Cargar datos del usuario visitado.
+ * - Mostrar contadores de seguidores y seguidos.
+ * - Mostrar modales con listados completos.
+ * - Detectar si el usuario logueado sigue al usuario visitado.
+ * - Permitir seguir / dejar de seguir.
+ *
+ * @returns {JSX.Element} Componente de perfil del usuario.
  */
-
 export default function UserProfile() {
-  const { name } = useParams(); // toma el nombre de la URL
+  // Usuario logueado (para saber si sigo a otro usuario)
+  const { user: loggedInUser } = useAuth();
+
+  // Nombre del usuario visitado (parámetro dinámico de la URL)
+  const { name } = useParams();
+
+  // Estado general del perfil
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Contadores
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
 
+  // Estado que indica si YA sigo a este usuario
+  const [isFollowing, setIsFollowing] = useState(false);
 
+  // Listas completas (para desplegar modal)
+  const [followersList, setFollowersList] = useState([]);
+  const [followingList, setFollowingList] = useState([]);
 
+  // Controla si mostrar modal y cuál lista mostrar
+  const [listToShow, setListToShow] = useState(null);
+
+  /**
+   * Carga toda la información del perfil y del seguimiento.
+   * Se ejecuta cuando cambia el usuario visitado (name).
+   */
   useEffect(() => {
-
-/**
- * Carga el perfil del usuario actual.
- * Si el usuario no tiene un nombre de usuario, sale inmediatamente.
- * Si hay un error al cargar el Perfil, se muestra el mensaje de error.
- * Si se carga con éxito, se muestra el Perfil.
- * Se utiliza finally para asegurar que se termina de cargar el Perfil aunque haya un error.
-**/
     async function loadProfile() {
       try {
-        const data = await apiFetch(`/users/public/${name}`);
-        setProfile(data);
+        setLoading(true);
+        setError(null);
+
+        // Peticiones paralelas
+        const profilePromise = apiFetch(`/users/public/${name}`);
+        const followersPromise = apiFetch(`/users/public/followers/${name}`);
+        const followingPromise = apiFetch(`/users/public/following/${name}`);
+
+        const [profileData, followersData, followingData] = await Promise.all([
+          profilePromise,
+          followersPromise,
+          followingPromise,
+        ]);
+
+        // Datos principales del perfil
+        setProfile(profileData);
+
+        // Guardamos las listas completas
+        setFollowersList(followersData);
+        setFollowingList(followingData);
+
+        // Actualizamos contadores visibles
+        setFollowersCount(followersData.length);
+        setFollowingCount(followingData.length);
+
+        // Determina si yo sigo a este usuario:
+        // "isFollowing" es true si MI username aparece en los seguidores del perfil visitado
+        setIsFollowing(followersData.some(u => u.username === loggedInUser?.username));
+
       } catch (err) {
         setError(err);
       } finally {
         setLoading(false);
       }
     }
+
     loadProfile();
   }, [name]);
 
-
-
-
-  if (loading) return <p>Cargando perfil...</p>;
-  if (error) return <p style={{ color: "red" }}>Error: {error.message}</p>;
+  // Mostrar estados especiales
+  if (loading) return <p className="loading-text">Cargando perfil...</p>;
+  if (error) return <p className="error-text">Error: {error.message}</p>;
   if (!profile) return <p>No se encontró el perfil del usuario.</p>;
 
+  // Determina qué lista envía al modal
+  const listData = listToShow === "followers" ? followersList : followingList;
+  const listTitle = listToShow === "followers" ? "Seguidores" : "Siguiendo";
 
+  /**
+   * Seguir a este usuario.
+   * Llama al endpoint POST /follow/{username}
+   */
+  async function handleFollow() {
+  try {
+    await apiFetch(`/users/follow/${name}`, { method: "POST" });
 
+    setIsFollowing(true);
+    setFollowersCount(prev => prev + 1);
+
+    //  AÑADIR EL USUARIO LOGUEADO A LA LISTA DE SEGUIDORES
+    setFollowersList(prev => [
+      ...prev,
+      { username: loggedInUser.username }
+    ]);
+
+  } catch (err) {
+    console.error("Error al seguir:", err);
+  }
+}
+
+  /**
+   * Dejar de seguir al usuario visitado.
+   * Llama al endpoint DELETE /unfollow/{username}
+   */
+  async function handleUnfollow() {
+  try {
+    await apiFetch(`/users/unfollow/${name}`, { method: "DELETE" });
+
+    setIsFollowing(false);
+    setFollowersCount(prev => (prev > 0 ? prev - 1 : 0));
+
+    //  QUITAR EL USUARIO LOGUEADO DE LA LISTA
+    setFollowersList(prev =>
+      prev.filter(u => u.username !== loggedInUser.username)
+    );
+
+  } catch (err) {
+    console.error("Error al dejar de seguir:", err);
+  }
+}
 
   return (
-    <div
-      style={{
-        maxWidth: "600px",
-        margin: "40px auto",
-        padding: "20px",
-        backgroundColor: "#f9f9f9",
-        borderRadius: "10px",
-        boxShadow: "0 0 8px rgba(0,0,0,0.1)",
-        textAlign: "center",
-      }}
-    >
-      <h2 style={{ marginBottom: "20px" }}>{profile.username}</h2>
-      <p>{profile.email}</p>
-      <p>{profile.description || "Sin descripción disponible"}</p>
-    </div>
+    <>
+      {/* CONTENEDOR DEL PERFIL */}
+      <div className="profile-container">
+        <h2 className="profile-username">{profile.username}</h2>
+        <p className="profile-email">{profile.email}</p>
+        <p className="profile-description">
+          {profile.description || "Sin descripción disponible"}
+        </p>
+
+        {/* Botón Seguir/Dejar de seguir — solo si no es mi propio perfil */}
+        {loggedInUser?.username !== name && (
+          <button
+            className={isFollowing ? "follow-btn unfollow" : "follow-btn"}
+            onClick={isFollowing ? handleUnfollow : handleFollow}
+          >
+            {isFollowing ? "Dejar de seguir" : "Seguir"}
+          </button>
+        )}
+
+        {/* Contadores clicables */}
+        <div className="profile-stats-container">
+          <div
+            className="profile-stat profile-stat-clickable"
+            onClick={() => setListToShow("followers")}
+          >
+            <strong className="profile-stat-count">{followersCount}</strong>
+            <span className="profile-stat-label">Seguidores</span>
+          </div>
+
+          <div
+            className="profile-stat profile-stat-clickable"
+            onClick={() => setListToShow("following")}
+          >
+            <strong className="profile-stat-count">{followingCount}</strong>
+            <span className="profile-stat-label">Siguiendo</span>
+          </div>
+        </div>
+      </div>
+
+      {/* MODAL DE LISTAS */}
+      {listToShow && (
+        <UserListModal
+          title={listTitle}
+          users={listData}
+          onClose={() => setListToShow(null)}
+        />
+      )}
+    </>
   );
 }

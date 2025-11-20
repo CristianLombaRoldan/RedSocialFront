@@ -65,6 +65,16 @@ export default function GetPublication({ id, authorName, text, createDate }) {
     }
   };
 
+  const handleAuthorClick = () => {
+    // Comprueba si el autor de la publicación es el usuario logueado
+    if (user?.username === authorName) {
+      navigate("/me"); // Si es, navega a /me
+    } else {
+      navigate(`/profile/${authorName}`); // Si no, navega al perfil público
+  }
+};
+
+
   return (
     <div
       style={{
@@ -78,7 +88,7 @@ export default function GetPublication({ id, authorName, text, createDate }) {
       <p>
         <strong
           style={{ cursor: "pointer", color: "blue" }}
-          onClick={() => navigate(`/profile/${authorName}`)}
+          onClick={handleAuthorClick}
         >
           {authorName}
         </strong>{" "}

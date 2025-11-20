@@ -134,3 +134,208 @@ a:hover {
 h1, h2, h3, h4 {
   color: var(--color-primary-dark);
 }
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(2px);
+  z-index: 999;
+}
+
+/* Tarjeta principal del modal */
+.modal-content {
+  background: #ffffff;
+  width: 320px;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Cabecera */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Botón de cerrar */
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #444;
+}
+
+.modal-close-btn:hover {
+  color: #000;
+}
+
+/* Cuerpo */
+.modal-body {
+  margin-top: 15px;
+}
+
+/* Lista de usuarios */
+.user-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.user-list-item {
+  background: #f2f2f2;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.user-list-item:hover {
+  background: #e0e0e0;
+}
+
+/* Enlaces */
+.user-list-item a {
+  text-decoration: none;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.user-list-item a:hover {
+  text-decoration: underline;
+}
+
+.profile-container {
+  background: var(--color-card-bg);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  padding: 25px 30px;
+  margin: 25px auto;
+  max-width: 750px;
+  box-shadow: 0 4px 10px rgba(251, 113, 133, 0.15);
+}
+
+/* Nombre del usuario */
+.profile-username {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+  margin-bottom: 8px;
+}
+
+/* Email */
+.profile-email {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+/* Descripción */
+.profile-description {
+  margin-bottom: 20px;
+  font-size: 1.05rem;
+  color: var(--color-text);
+}
+
+/* ================================
+   CONTADORES (SEGUIDORES / SIGUIENDO)
+   ================================ */
+
+.profile-stats-container {
+  display: flex;
+  gap: 40px;
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+
+.profile-stat {
+  text-align: center;
+}
+
+.profile-stat-count {
+  font-size: 1.4rem;
+  color: var(--color-primary-dark);
+  font-weight: 800;
+}
+
+/* Etiquetas “Seguidores / Siguiendo” */
+.profile-stat-label {
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+/* Clickables */
+.profile-stat-clickable {
+  cursor: pointer;
+  transition: transform 0.15s ease, color 0.15s ease;
+  border-radius: 6px;
+  padding: 5px 10px;
+}
+
+.profile-stat-clickable:hover {
+  transform: translateY(-2px);
+  background-color: var(--color-secondary);
+}
+
+/* ================================
+   LISTA DE PUBLICACIONES (si la usas)
+   ================================ */
+
+.post-card {
+  background: var(--color-card-bg);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-top: 15px;
+  box-shadow: 0 3px 8px rgba(251, 113, 133, 0.15);
+}
+
+.post-author {
+  color: var(--color-primary-dark);
+  font-weight: 700;
+}
+
+.post-date {
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.follow-btn {
+  margin-top: 12px;
+  padding: 8px 20px;
+  background-color: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.follow-btn:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.follow-btn.unfollow {
+  background-color: #dc2626;
+}
+
+.follow-btn.unfollow:hover {
+  background-color: #b91c1c;
+}
+
