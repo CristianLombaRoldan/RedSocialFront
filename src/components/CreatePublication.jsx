@@ -53,8 +53,13 @@ export default function CreatePublication() {  // ya NO necesitas onNewPublicati
 
       setText("");
 
-      // Invalida el listado de publicaciones para recargar automática de la lista
-      queryClient.invalidateQueries(["/publications/"]);
+      // Invalida cualquier lista de publicaciones (todas y propias)
+      queryClient.invalidateQueries({
+        predicate: (q) => {
+          const key = String(q.queryKey?.[0] || "");
+          return key.includes("publications");
+        },
+      });
 
     } catch (err) {
       setError(err.message || "Error al crear la publicación.");
@@ -108,3 +113,6 @@ export default function CreatePublication() {  // ya NO necesitas onNewPublicati
     </div>
   );
 }
+
+
+

@@ -135,6 +135,37 @@ h1, h2, h3, h4 {
   color: var(--color-primary-dark);
 }
 
+.logo-anim {
+  display: inline-block;
+  color: var(--color-primary-dark);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  animation: logoFloat 2.4s ease-in-out infinite alternate,
+             logoSway 6s ease-in-out infinite;
+}
+
+.logo-anim.logo-hero {
+  font-size: 28px;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.logo-anim.logo-header {
+  font-size: 22px;
+}
+
+@keyframes logoFloat {
+  from { transform: translateY(0); }
+  to { transform: translateY(-6px); }
+}
+
+@keyframes logoSway {
+  0% { filter: drop-shadow(0 0 0 rgba(0,0,0,0.05)); }
+  50% { filter: drop-shadow(0 6px 10px rgba(251, 113, 133, 0.25)); }
+  100% { filter: drop-shadow(0 0 0 rgba(0,0,0,0.05)); }
+}
+
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -337,5 +368,10 @@ h1, h2, h3, h4 {
 
 .follow-btn.unfollow:hover {
   background-color: #b91c1c;
+}
+
+.publication {
+  opacity: 0;
+  transform: translateY(50px);
 }
 

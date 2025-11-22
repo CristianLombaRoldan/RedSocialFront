@@ -4,11 +4,21 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
 import App from "./App";
 import "./social.css";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
+
 
 
 const queryClient = new QueryClient();
 
-// Renderiza la app en el DOM y envuelve con el proveedor de autenticación y el proveedor de React Query
+
+/**
+ * Renderiza el componente principal de la app.
+ * @returns {JSX.Element} Componente principal de la app.
+ */
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
@@ -18,3 +28,4 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     </QueryClientProvider>
   </React.StrictMode>
 );
+
