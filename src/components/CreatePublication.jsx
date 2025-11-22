@@ -1,72 +1,80 @@
-import { useState } from "react";
+import { useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../context/useAuth";
 import { apiFetch } from "../api/client";
-import { useQueryClient } from "@tanstack/react-query"; // ✅ IMPORTANTE
-
-
 
 
 /**
- * Componente que permite crear una nueva publicación.
- * 
- * @returns {JSX.Element} Componente que contiene un formulario para crear una publicación.
+ * Datos que se envían al crear una publicación.
+ * @typedef {Object} CreatePublicationValues
+ * @property {string} text - Contenido de la publicación.
  */
 
-export default function CreatePublication() {  // ya NO necesitas onNewPublication
+
+/**
+ * Formulario para crear una nueva publicación.
+ *
+ * Utiliza React Hook Form para gestionar el estado y la validación del textarea,
+ * y React Query para lanzar la mutación de creación contra la API. Tras una
+ * creación correcta invalida las queries relacionadas con publicaciones para
+ * refrescar automáticamente los listados.
+ *
+ * @returns {JSX.Element} Un formulario estilado para crear publicaciones.
+ */
+export default function CreatePublication() {
   const { user } = useAuth();
-  const [text, setText] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
-  // Usamos useQueryClient para invalidar el listado de publicaciones
   const queryClient = useQueryClient();
 
-  if (!user) {
-    return <p>Debes estar logueado para crear una publicación.</p>;
-  }
 
-/**
- * Función que se encarga de crear una nueva publicación.
- * 
- * Primero, evita que el formulario se envíe.
- * Luego, verifica si el texto de la publicación no está vacío.
- * Si no lo está, intenta crear la publicación con la API.
- * Si la creación es exitosa, invalida el listado de publicaciones para que se recargue automáticamente.
- * Si ocurre un error, muestra un mensaje de error.
- * Finalmente, siempre que termine la función, se asegura de que el formulario no esté en estado de envío.
- */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    defaultValues: {
+      text: "",
+    },
+    mode: "onBlur",
+  });
 
-    if (!text.trim()) {
-      setError("La publicación no puede estar vacía.");
-      return;
-    }
 
-    setIsSubmitting(true);
-    setError(null);
-
-    try {
-      await apiFetch("/publications/", {
+  const mutation = useMutation({
+    mutationFn: async ({ text }) =>
+      apiFetch("/publications/", {
         method: "POST",
         body: JSON.stringify({ text }),
-      });
-
-      setText("");
-
-      // Invalida cualquier lista de publicaciones (todas y propias)
+      }),
+    onSuccess: () => {
+      reset();
       queryClient.invalidateQueries({
-        predicate: (q) => {
-          const key = String(q.queryKey?.[0] || "");
-          return key.includes("publications");
-        },
+        predicate: (query) =>
+          Array.isArray(query.queryKey) &&
+          typeof query.queryKey[0] === "string" &&
+          query.queryKey[0].includes("publications"),
       });
+    },
+  });
 
-    } catch (err) {
-      setError(err.message || "Error al crear la publicación.");
-    } finally {
-      setIsSubmitting(false);
-    }
+
+  /**
+   * Envía el texto de la publicación a la API.
+   *
+   * @param {CreatePublicationValues} values - Valores validados del formulario.
+   * @returns {Promise<void>} Promesa que resuelve cuando se completa la creación.
+   */
+  const onSubmit = async (values) => {
+    if (!user) return;
+    await mutation.mutateAsync(values);
   };
+
+
+  const isDisabled = useMemo(
+    () => !user || isSubmitting || mutation.isPending,
+    [user, isSubmitting, mutation.isPending],
+  );
+
 
   return (
     <div style={{
@@ -78,12 +86,26 @@ export default function CreatePublication() {  // ya NO necesitas onNewPublicati
       boxShadow: "0 0 8px rgba(0,0,0,0.1)",
     }}>
       <h3>Crea una nueva publicación</h3>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+
         <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="¿Qué estás pensando?"
-          rows={4}
+          placeholder={
+            user
+              ? "¿Qué está pasando?"
+              : "Inicia sesión para poder publicar."
+          }
+          rows={3}
+          {...register("text", {
+            required: user ? "El texto de la publicación es obligatorio." : false,
+            minLength: {
+              value: 3,
+              message: "La publicación debe tener al menos 3 caracteres.",
+            },
+            maxLength: {
+              value: 280,
+              message: "La publicación no puede superar los 280 caracteres.",
+            },
+          })}
           style={{
             width: "100%",
             padding: "10px",
@@ -91,8 +113,12 @@ export default function CreatePublication() {  // ya NO necesitas onNewPublicati
             border: "1px solid #ccc",
             resize: "none",
           }}
-          disabled={isSubmitting}
+          disabled={isDisabled}
+          
         />
+         {errors.text && (
+          <p className="field-error">{errors.text.message}</p>
+        )}
         <button
           type="submit"
           disabled={isSubmitting}
@@ -109,7 +135,12 @@ export default function CreatePublication() {  // ya NO necesitas onNewPublicati
           {isSubmitting ? "Publicando..." : "Publicar"}
         </button>
       </form>
-      {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
+     {mutation.isError && (
+        <p className="error-text">
+          {mutation.error?.message ?? "No se ha podido crear la publicación."}
+        </p>
+      )}
+
     </div>
   );
 }
