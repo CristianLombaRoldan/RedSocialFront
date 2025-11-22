@@ -2,81 +2,111 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import { apiFetch } from "../api/client";
-
-
+import { useRef, useEffect } from "react";
+import { gsap } from "gsap";
+import "../social.css";
 
 /**
- * Componente que renderiza una publicación.
- * Incluye el nombre del autor, texto y fecha de creación.
- * Si el usuario actual es el autor, se muestra un botón para borrar la publicación.
- * Al hacer click en el botón, se muestra un diálogo para confirmar la eliminación.
- * Si se confirma, se borra la publicación y se invalida el listado de publicaciones para refrescarlo.
- * @param {number} id - Identificador único de la publicación.
- * @param {string} authorName - Nombre del autor de la publicación.
- * @param {string} text - Texto de la publicación.
- * @param {Date} createDate - Fecha de creación de la publicación.
- * @returns {React.ReactElement} Componente que renderiza la publicación.
+ * Renderiza una publicacion y permite borrarla si pertenece al usuario actual.
+ *
+ * @param {{ id: number, authorName: string, text: string, createDate: Date }} props
+ * @returns {JSX.Element}
  */
-
 export default function GetPublication({ id, authorName, text, createDate }) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const pubRef = useRef(null);
 
+  /**
+   * Elimina la publicacion borrada de cualquier cache de React Query
+   * que contenga "publication" en la queryKey (listas generales, propias, perfiles).
+   *
+   * @param {unknown} oldData - Estado previo de React Query.
+   * @returns {unknown} Datos sin la publicacion borrada.
+   */
+  const removeFromCaches = (oldData) => {
+    if (!oldData || !oldData.pages) return oldData;
 
+    return {
+      ...oldData,
+      pages: oldData.pages.map((page) => ({
+        ...page,
+        content: Array.isArray(page.content)
+          ? page.content.filter((pub) => pub.id !== id)
+          : page.content,
+      })),
+    };
+  };
+
+  /**
+   * Refresca todas las queries de publicaciones para evitar refrescar manualmente.
+   * Primero actualiza el cache en caliente y luego dispara un refetch.
+   */
+  const refreshPublicationQueries = () => {
+    const predicate = (query) =>
+      String(query.queryKey?.[0] || "").includes("publication");
+
+    queryClient.setQueriesData({ predicate }, removeFromCaches);
+    queryClient.invalidateQueries({ predicate });
+  };
+
+  /** Mutacion que borra la publicacion actual. */
   const deleteMutation = useMutation({
-
-/**
- * Función que se encarga de eliminar una publicación.
- * Realiza una petición DELETE a la API con el identificador de la publicación.
- * Si la eliminación es exitosa, se invalida el listado de publicaciones para refrescarlo.
- */
-
     mutationFn: async () => {
       await apiFetch(`/publications/${id}`, { method: "DELETE" });
     },
-
-/**
- * Función que se llama cuando se elimina con éxito una publicación.
- * Invalida el listado de publicaciones para refrescarlo.
-**/
-    onSuccess: () => {
-      // Invalida el listado de publicaciones para refrescarlo
-     queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0]?.includes("/publications"),
-      });
-    },
-
-/**
- * Función que se llama cuando se produce un error al intentar borrar una publicación.
- * Muestra un alert con el mensaje de error.
- * @param {Error} error - Error producido al intentar borrar la publicación.
- */
-
+    onSuccess: refreshPublicationQueries,
     onError: (error) => {
-      alert(`Error al borrar publicación: ${error.message}`);
+      alert(`Error al borrar publicacion: ${error.message}`);
     },
   });
 
-  // 🔥 Handler para el click
+  /** Borra la publicacion tras confirmacion del usuario. */
   const handleDelete = () => {
-    if (window.confirm("¿Seguro que quieres borrar esta publicación?")) {
+    if (window.confirm("Seguro que quieres borrar esta publicacion?")) {
       deleteMutation.mutate();
     }
   };
 
+  /** Navega al perfil del autor o al propio perfil. */
   const handleAuthorClick = () => {
-    // Comprueba si el autor de la publicación es el usuario logueado
     if (user?.username === authorName) {
-      navigate("/me"); // Si es, navega a /me
+      navigate("/me");
     } else {
-      navigate(`/profile/${authorName}`); // Si no, navega al perfil público
-  }
-};
+      navigate(`/profile/${authorName}`);
+    }
+  };
 
+  // Animacion de entrada (fade + translateY) cuando aparece en viewport
+  useEffect(() => {
+    const el = pubRef.current;
+    if (!el) return;
+
+    const timer = setTimeout(() => {
+      gsap.to(el, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: el,
+          start: "top 90%",
+          once: true,
+        },
+      });
+    }, 50);
+
+    return () => {
+      clearTimeout(timer);
+      gsap.killTweensOf(el);
+    };
+  }, []);
 
   return (
     <div
+      ref={pubRef}
+      className="publication"
       style={{
         border: "1px solid #ccc",
         borderRadius: "10px",
@@ -92,7 +122,11 @@ export default function GetPublication({ id, authorName, text, createDate }) {
         >
           {authorName}
         </strong>{" "}
-        — {new Date(createDate).toLocaleString("es-ES", { timeZone: "Europe/Madrid" })}
+        -
+        {" "}
+        {new Date(createDate).toLocaleString("es-ES", {
+          timeZone: "Europe/Madrid",
+        })}
       </p>
 
       <p>{text}</p>
@@ -111,7 +145,7 @@ export default function GetPublication({ id, authorName, text, createDate }) {
           onClick={handleDelete}
           disabled={deleteMutation.isPending}
         >
-          {deleteMutation.isPending ? "Borrando..." : "Borrar publicación"}
+          {deleteMutation.isPending ? "Borrando..." : "Borrar publicacion"}
         </button>
       )}
     </div>
