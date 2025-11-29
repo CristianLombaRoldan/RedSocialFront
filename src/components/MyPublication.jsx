@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { gsap } from "gsap";
 import { apiFetch } from "../api/client";
-import { useAuth } from "../context/useAuth";
+import { useAuth } from "../hooks/useAuth";
 import GetPublication from "./GetPublication";
 
 /**
@@ -35,10 +35,29 @@ export default function MyPublication() {
     refetchOnReconnect: "always",
     refetchOnWindowFocus: false,
     gcTime: 0,
+
+/**
+ * Función que se encarga de fetchear las publicaciones propias de un usuario.
+ * Recibe un objeto con una propiedad "pageParam" que indica la página actual.
+ * Devuelve una promesa que se resuelve con el resultado de la petición a la API.
+ * La petición se hace a "/publications/public/{username}" con los parámetros "page" y "size" igual a 5 y "sort" igual a "createDate,desc".
+ * @param {{ pageParam: number }} params - Objeto con la página actual.
+ * @returns {Promise<any>} Promesa que se resuelve con el resultado de la petición a la API.
+ */
+
     queryFn: ({ pageParam = 0 }) =>
       apiFetch(
         `/publications/public/${user.username}?page=${pageParam}&size=5&sort=createDate,desc`
       ),
+
+/**
+ * Devuelve el parámetro para la página siguiente en función de
+ * la página actual.
+ * Si la página actual es la última, devuelve undefined.
+ * De lo contrario, devuelve el número de la página actual más uno.
+ * @param {{ last: boolean, number: number }} lastPage - Objeto con la información de la página actual.
+ * @returns {number | undefined} Número de la página siguiente o undefined si es la última página.
+ */
     getNextPageParam: (lastPage) =>
       lastPage?.last ? undefined : lastPage.number + 1,
   });

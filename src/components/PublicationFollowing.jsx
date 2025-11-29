@@ -15,7 +15,7 @@ export default function PublicationFollowing() {
   const loadMoreRef = useRef(null);
   const listRef = useRef(null);
 
-  // Vac韆 el cache al entrar y salir del feed de seguidos
+  // Vacia el cache al entrar y salir del feed de seguidos
   useEffect(() => {
     queryClient.removeQueries({ queryKey: ["following-publications"] });
     return () => {
@@ -36,6 +36,16 @@ export default function PublicationFollowing() {
     refetchOnReconnect: "always",
     refetchOnWindowFocus: false,
     gcTime: 0,
+
+  /**
+   * Funci贸n que se encarga de fetchear las publicaciones de los usuarios seguidos.
+   * Recibe un objeto con una propiedad "pageParam" que indica la p谩gina actual.
+   * Devuelve una promesa que se resuelve con el resultado de la petici贸n a la API.
+   * La petici贸n se hace a "/publications/following/" con los par谩metros "page" y "size" igual a 5 y "sort" igual a "createDate,desc".
+   * @param {{ pageParam: number }} params - Objeto con la p谩gina actual.
+   * @returns {Promise<any>} Promesa que se resuelve con el resultado de la petici贸n a la API.
+   */
+
     queryFn: async ({ pageParam = 0 }) =>
       apiFetch(
         `/publications/following?page=${pageParam}&size=5&sort=createDate,desc`
