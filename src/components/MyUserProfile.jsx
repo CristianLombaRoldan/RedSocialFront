@@ -1,13 +1,13 @@
+// src/components/MyUserProfile.jsx
 import { useEffect, useState } from "react";
 import { apiFetch } from "../api/client";
-import { useAuth } from "../context/useAuth";
+import { useAuth } from "../hooks/useAuth";
 import "../social.css";
 import UserListModal from "./UserListModal";
 
-
 /**
  * Componente para mostrar el perfil del usuario autenticado.
- * (MODIFICADO) Ahora muestra listas de seguidores/seguidos al hacer clic.
+ * Muestra listas de seguidores/seguidos y permite cambiar el username.
  * @returns {JSX.Element}
  */
 export default function MyUserProfile() {
@@ -16,17 +16,12 @@ export default function MyUserProfile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
-
 
   const [followersList, setFollowersList] = useState([]);
   const [followingList, setFollowingList] = useState([]);
   const [listToShow, setListToShow] = useState(null);
-
-
-
 
   const [showForm, setShowForm] = useState(false);
   const [newUsername, setNewUsername] = useState("");
@@ -34,12 +29,10 @@ export default function MyUserProfile() {
   const [updateError, setUpdateError] = useState(null);
   const [redirectMessage, setRedirectMessage] = useState("");
 
-
+  /**
+   * Carga el perfil del usuario autenticado, sus seguidores y seguidos.
+   */
   useEffect(() => {
-/**
- * Carga el perfil del usuario autenticado, sus seguidores y los usuarios a los que sigue.
- * Actualiza los estados de carga, error y lista de seguidores/seguidos.
- */
     async function loadProfile() {
       if (!user?.username) {
         setLoading(false);
@@ -49,11 +42,9 @@ export default function MyUserProfile() {
         setLoading(true);
         setError(null);
 
-
-        const profilePromise = apiFetch(`/users/public/${user.username}`); // Asumo que este es el perfil
-        const followersPromise = apiFetch("/users/followers"); // Autenticado
-        const followingPromise = apiFetch("/users/following"); // Autenticado
-
+        const profilePromise = apiFetch(`/users/public/${user.username}`);
+        const followersPromise = apiFetch("/users/followers");
+        const followingPromise = apiFetch("/users/following");
 
         const [profileData, followersData, followingData] = await Promise.all([
           profilePromise,
@@ -61,17 +52,11 @@ export default function MyUserProfile() {
           followingPromise,
         ]);
 
-
         setProfile(profileData);
-
-
         setFollowersList(followersData);
         setFollowingList(followingData);
         setFollowersCount(followersData.length);
         setFollowingCount(followingData.length);
-       
-
-
       } catch (err) {
         setError(err);
       } finally {
@@ -79,22 +64,16 @@ export default function MyUserProfile() {
       }
     }
     loadProfile();
-  }, [user.username]);
+  }, [user?.username]);
 
-
-
-
-/**
- * Actualiza el nombre de usuario del usuario autenticado.
- * Valida el formulario y verifica que el nuevo nombre de usuario no esté vacío y sea diferente al actual.
- * Si hay un error, se muestra un mensaje de error.
- * Si se actualiza correctamente, se muestra un mensaje de éxito y se redirige al login después de 2 segundos.
- * @param {Event} e - Evento del formulario.
- */
+  /**
+   * Actualiza el nombre de usuario del usuario autenticado.
+   * Valida el formulario y muestra mensajes de error o exito.
+   */
   const handleChangeUsername = async (e) => {
     e.preventDefault();
     if (!newUsername.trim()) {
-      setUpdateError("El nombre de usuario no puede estar vacío.");
+      setUpdateError("El nombre de usuario no puede estar vacio.");
       return;
     }
     if (newUsername === user.username) {
@@ -108,7 +87,7 @@ export default function MyUserProfile() {
         method: "PATCH",
         body: JSON.stringify({ username: newUsername }),
       });
-      setRedirectMessage("Nombre de usuario actualizado. Serás redirigido al login...");
+      setRedirectMessage("Nombre de usuario actualizado. Seras redirigido al login...");
       setTimeout(() => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
@@ -120,31 +99,25 @@ export default function MyUserProfile() {
     }
   };
 
-
-
-
   if (loading) return <p>Cargando perfil...</p>;
   if (error) return <p className="error-text">Error: {error.message}</p>;
-  if (!profile) return <p>No se encontró el perfil del usuario.</p>;
+  if (!profile) return <p>No se encontro el perfil del usuario.</p>;
 
-
-  const listData = listToShow === 'followers' ? followersList : followingList;
-  const listTitle = listToShow === 'followers' ? 'Seguidores' : 'Siguiendo';
-
+  const listData = listToShow === "followers" ? followersList : followingList;
+  const listTitle = listToShow === "followers" ? "Seguidores" : "Siguiendo";
 
   return (
     <>
       <div className="profile-container">
         <h2 className="profile-username">{profile.username}</h2>
         <p className="profile-email">{profile.email}</p>
-        <p className="profile-description">{profile.description || "Sin descripción disponible"}</p>
+        <p className="profile-description">{profile.description || "Sin descripcion disponible"}</p>
 
-
-        {/* -- Seguidores/seguidos -- */}
+        {/* Seguidores/seguidos */}
         <div className="profile-stats-container">
           <div
-            className="profile-stat profile-stat-clickable" // Nueva clase
-            onClick={() => setListToShow('followers')} // Acción
+            className="profile-stat profile-stat-clickable"
+            onClick={() => setListToShow("followers")}
             role="button"
             tabIndex="0"
           >
@@ -152,8 +125,8 @@ export default function MyUserProfile() {
             <span className="profile-stat-label">Seguidores</span>
           </div>
           <div
-            className="profile-stat profile-stat-clickable" // Nueva clase
-            onClick={() => setListToShow('following')} // Acción
+            className="profile-stat profile-stat-clickable"
+            onClick={() => setListToShow("following")}
             role="button"
             tabIndex="0"
           >
@@ -161,19 +134,12 @@ export default function MyUserProfile() {
             <span className="profile-stat-label">Siguiendo</span>
           </div>
         </div>
-        {/* -- Fin de Seguidores/seguidos -- */}
-
-
-
 
         <hr className="profile-divider" />
 
-
-       
         <button onClick={() => setShowForm(!showForm)} className="profile-toggle-form-btn">
           {showForm ? "Cancelar" : "Cambiar nombre de usuario"}
         </button>
-
 
         {showForm && (
           <form onSubmit={handleChangeUsername} className="profile-update-form">
@@ -211,8 +177,6 @@ export default function MyUserProfile() {
         )}
       </div>
 
-
-     
       {listToShow && (
         <UserListModal
           title={listTitle}
@@ -220,7 +184,6 @@ export default function MyUserProfile() {
           onClose={() => setListToShow(null)}
         />
       )}
-     
     </>
   );
 }

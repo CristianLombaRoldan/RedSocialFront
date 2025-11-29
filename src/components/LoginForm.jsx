@@ -1,31 +1,28 @@
-
+// src/components/LoginForm.jsx
 import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "../api/auth";
-import { useAuth } from "../context/useAuth";
+import { useAuth } from "../hooks/useAuth";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useMemo } from "react";
 
 /**
- * Datos que se envían en el formulario de login.
+ * Datos que se envian en el formulario de login.
  * @typedef {Object} LoginFormValues
  * @property {string} username - Nombre de usuario.
- * @property {string} password - Contraseña del usuario.
+ * @property {string} password - Contrasena del usuario.
  */
 
-
 /**
- * Formulario de inicio de sesión.
+ * Formulario de inicio de sesion.
  *
- * Gestiona el estado y la validación del formulario utilizando React Hook Form
- * y lanza la mutación de login contra la API. Muestra errores de validación de
- * campo y errores globales de la API manteniendo la cohesión visual con el diseño existente.
+ * Gestiona validaciones con React Hook Form y usa React Query
+ * para lanzar el login y mostrar errores amigables.
  *
  * @returns {JSX.Element} Formulario de login listo para usar.
  */
 export default function LoginForm() {
   const { login } = useAuth();
-
 
   const {
     register,
@@ -39,7 +36,7 @@ export default function LoginForm() {
     mode: "onBlur",
   });
 
-
+  // Mutacion encargada de realizar el login contra la API.
   const mutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
@@ -47,9 +44,8 @@ export default function LoginForm() {
     },
   });
 
-
   /**
-   * Envía el formulario a la API.
+   * Envia el formulario a la API.
    *
    * @param {LoginFormValues} values - Valores validados del formulario.
    * @returns {Promise<void>} Promesa que resuelve cuando termina el login.
@@ -58,12 +54,11 @@ export default function LoginForm() {
     await mutation.mutateAsync(values);
   };
 
-
+  // Evita acciones mientras hay peticiones o submit en curso.
   const isDisabled = useMemo(
     () => isSubmitting || mutation.isPending,
     [isSubmitting, mutation.isPending],
   );
-
 
   return (
     <>
@@ -72,70 +67,66 @@ export default function LoginForm() {
         <h3>Iniciar sesion</h3>
         <label htmlFor="username">Nombre de usuario</label>
         <input
-            id="username"
-            type="text"
-            className="login-input"
-            placeholder="Tu nombre de usuario"
-            autoComplete="username"
-            {...register("username", {
-              required: "El nombre de usuario es obligatorio.",
-              minLength: {
-                value: 3,
-                message: "El nombre de usuario debe tener al menos 3 caracteres.",
-              },
-              maxLength: {
-                value: 30,
-                message: "El nombre de usuario no puede superar los 30 caracteres.",
-              },
-            })}
-            disabled={isDisabled}
-          />
-          {errors.username && (
-            <p className="field-error">{errors.username.message}</p>
-          )}
+          id="username"
+          type="text"
+          className="login-input"
+          placeholder="Tu nombre de usuario"
+          autoComplete="username"
+          {...register("username", {
+            required: "El nombre de usuario es obligatorio.",
+            minLength: {
+              value: 3,
+              message: "El nombre de usuario debe tener al menos 3 caracteres.",
+            },
+            maxLength: {
+              value: 30,
+              message: "El nombre de usuario no puede superar los 30 caracteres.",
+            },
+          })}
+          disabled={isDisabled}
+        />
+        {errors.username && (
+          <p className="field-error">{errors.username.message}</p>
+        )}
 
+        <label htmlFor="password">Contrasena</label>
+        <input
+          id="password"
+          type="password"
+          className="login-input"
+          placeholder="********"
+          autoComplete="current-password"
+          {...register("password", {
+            required: "La contrasena es obligatoria.",
+            minLength: {
+              value: 6,
+              message: "La contrasena debe tener al menos 6 caracteres.",
+            },
+          })}
+          disabled={isDisabled}
+        />
+        {errors.password && (
+          <p className="field-error">{errors.password.message}</p>
+        )}
 
-          <label htmlFor="password">Contraseña</label>
-          <input
-            id="password"
-            type="password"
-            className="login-input"
-            placeholder="••••••••"
-            autoComplete="current-password"
-            {...register("password", {
-              required: "La contraseña es obligatoria.",
-              minLength: {
-                value: 6,
-                message: "La contraseña debe tener al menos 6 caracteres.",
-              },
-            })}
-            disabled={isDisabled}
-          />
-          {errors.password && (
-            <p className="field-error">{errors.password.message}</p>
-          )}
+        <button
+          type="submit"
+          className="login-button"
+          disabled={isDisabled}
+        >
+          {isDisabled ? "Entrando..." : "Entrar"}
+        </button>
 
+        {mutation.isError && (
+          <p className="error-text">
+            {mutation.error?.message ?? "No se ha podido iniciar sesion."}
+          </p>
+        )}
+      </form>
 
-          <button
-            type="submit"
-            className="login-button"
-            disabled={isDisabled}
-          >
-            {isDisabled ? "Entrando..." : "Entrar"}
-          </button>
-
-
-          {mutation.isError && (
-            <p className="error-text">
-              {mutation.error?.message ?? "No se ha podido iniciar sesión."}
-            </p>
-          )}
-        </form>
-
-
-        <p className="login-register-text">
-          ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
-        </p>
-      </>
+      <p className="login-register-text">
+        No tienes cuenta? <Link to="/register">Registrate aqui</Link>
+      </p>
+    </>
   );
 }

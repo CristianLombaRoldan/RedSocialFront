@@ -1,9 +1,8 @@
 // src/App.jsx
-// Aquí configuramos la navegación general de la app.
-// Dependemos del contexto de autenticación para saber si el usuario tiene token.
+// Configuracion de rutas principales segun autenticacion.
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { useAuth } from "./context/useAuth";
+import { useAuth } from "./hooks/useAuth";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
 import HomePage from "./pages/HomePage";
@@ -11,22 +10,24 @@ import AllPublicationsPage from "./pages/AllPublicationsPage";
 import MyProfilePage from "./pages/MyProfilePage";
 import ProfilePage from "./pages/ProfilePage";
 
-
+/**
+ * Router raiz de la aplicacion.
+ * Decide rutas publicas o privadas segun autenticacion.
+ * @returns {JSX.Element}
+ */
 export default function App() {
   const { isAuthenticated } = useAuth();
-
 
   return (
     <Router>
       <Routes>
-        {/* Si NO está logueado, sólo puede ver la ruta "/" (login/registro) */}
+        {/* Si no esta logueado, solo puede ver login/registro */}
         {!isAuthenticated ? (
           <>
             <Route path="/" element={<AuthPage />} />
-            <Route path="/register" element={<RegisterForm/>}/>
+            <Route path="/register" element={<RegisterForm />} />
             {/* Cualquier otra ruta redirige a login */}
             <Route path="*" element={<Navigate to="/" />} />
-            
           </>
         ) : (
           <>
@@ -44,17 +45,15 @@ export default function App() {
   );
 }
 
-
 /**
- * Página inicial cuando no hay sesión iniciada.
+ * Pagina inicial cuando no hay sesion iniciada.
  * Muestra login y registro.
  */
 function AuthPage() {
   return (
     <main style={{ maxWidth: 500, margin: "40px auto" }}>
-      <h2>Bienvenid@ a Círculo</h2>
+      <h2>Bienvenid@ a Circulo</h2>
       <LoginForm />
-     
     </main>
   );
 }
