@@ -10,7 +10,7 @@ import { useMemo } from "react";
  * Datos que se envian en el formulario de login.
  * @typedef {Object} LoginFormValues
  * @property {string} username - Nombre de usuario.
- * @property {string} password - Contrasena del usuario.
+ * @property {string} password - Contraseña del usuario.
  */
 
 /**
@@ -89,7 +89,7 @@ export default function LoginForm() {
           <p className="field-error">{errors.username.message}</p>
         )}
 
-        <label htmlFor="password">Contrasena</label>
+        <label htmlFor="password">Contraseña</label>
         <input
           id="password"
           type="password"
@@ -97,10 +97,10 @@ export default function LoginForm() {
           placeholder="********"
           autoComplete="current-password"
           {...register("password", {
-            required: "La contrasena es obligatoria.",
+            required: "La contraseña es obligatoria.",
             minLength: {
               value: 6,
-              message: "La contrasena debe tener al menos 6 caracteres.",
+              message: "La contraseña debe tener al menos 6 caracteres.",
             },
           })}
           disabled={isDisabled}
