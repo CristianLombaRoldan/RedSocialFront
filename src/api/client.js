@@ -52,7 +52,7 @@ export async function apiFetch(url, options = {}) {
 
   // 5) Si la respuesta tiene error (4xx o 5xx), intentamos mostrar un mensaje claro.
   if (!res.ok) {
-    let msg = `Error HTTP ${res.status}`;
+    let msg = `Error HTTP ${res.errores}`;
     try {
       // Intentamos leer el cuerpo como JSON (formato ProblemDetail de Spring Boot)
       const body = await res.json();
