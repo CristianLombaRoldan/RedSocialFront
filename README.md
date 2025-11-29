@@ -1,4 +1,4 @@
-﻿# 🌐 Círculo — Red social React (DAW) | Cristian Lomba Roldán
+﻿#  Círculo — Red social React (DAW) | Cristian Lomba Roldán
 
 ## Índice
 - [Introducción](#introducción)
