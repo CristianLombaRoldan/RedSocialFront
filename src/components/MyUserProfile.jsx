@@ -71,7 +71,7 @@ export default function MyUserProfile() {
    * Valida el formulario y muestra mensajes de error o exito.
    */
   const handleChangeUsername = async (e) => {
-    e.preventDefault();
+     e.preventDefault();
     if (!newUsername.trim()) {
       setUpdateError("El nombre de usuario no puede estar vacio.");
       return;
@@ -87,20 +87,33 @@ export default function MyUserProfile() {
         method: "PATCH",
         body: JSON.stringify({ username: newUsername }),
       });
-      setRedirectMessage("Nombre de usuario actualizado. Seras redirigido al login...");
+      setRedirectMessage(
+        "Nombre de usuario actualizado. Seras redirigido al login..."
+      );
       setTimeout(() => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        globalThis.location.replace("/login");
+        window.location.replace("/login");
       }, 2000);
     } catch (err) {
-      setUpdateError(err.message || "Error al actualizar el nombre de usuario.");
+      const rawMsg = typeof err?.message === "string" ? err.message : "";
+      const normalized = rawMsg
+        ? rawMsg.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+        : "";
+      const msg =
+        normalized.includes("datos invalidos")
+          ? "Ese nombre de usuario ya esta en uso. Prueba con otro distinto."
+          : rawMsg;
+      setUpdateError(
+        msg || "Error al actualizar el nombre de usuario."
+      );
       setIsUpdating(false);
     }
   };
 
+
   if (loading) return <p>Cargando perfil...</p>;
-  if (error) return <p className="error-text">Error: {error.message}</p>;
+  if (error) return <p className="error-text">Error: {error.errores}</p>;
   if (!profile) return <p>No se encontro el perfil del usuario.</p>;
 
   const listData = listToShow === "followers" ? followersList : followingList;
