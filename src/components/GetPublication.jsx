@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/useAuth";
+import { useAuth } from "../hooks/useAuth";
 import { apiFetch } from "../api/client";
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
@@ -16,6 +16,7 @@ export default function GetPublication({ id, authorName, text, createDate }) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  // Usado para animaciones de scroll infinito
   const pubRef = useRef(null);
 
   /**
@@ -82,7 +83,7 @@ export default function GetPublication({ id, authorName, text, createDate }) {
   useEffect(() => {
     const el = pubRef.current;
     if (!el) return;
-
+    // Despues de 50ms se activa la animacion para el primer elemento de la lista de publicaciones
     const timer = setTimeout(() => {
       gsap.to(el, {
         opacity: 1,
@@ -96,7 +97,7 @@ export default function GetPublication({ id, authorName, text, createDate }) {
         },
       });
     }, 50);
-
+    // Limpia el timer y la animacion al desmontar el componente
     return () => {
       clearTimeout(timer);
       gsap.killTweensOf(el);

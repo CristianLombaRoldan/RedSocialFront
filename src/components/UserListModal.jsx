@@ -1,55 +1,51 @@
+// src/components/UserListModal.jsx
 import React from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/useAuth"; // Importas useAuth
-import "../social.css"
-
+import { useAuth } from "../hooks/useAuth";
+import "../social.css";
 
 /**
- * Un componente modal reutilizable para mostrar una lista de usuarios.
- * (MODIFICADO) Ahora redirige a /me si el usuario es el logueado.
+ * Modal reutilizable para mostrar una lista de usuarios.
+ * Redirige a /me si el usuario listado es el logueado.
+ *
  * @param {object} props
- * @param {string} props.title - Título del modal (ej: "Seguidores")
- * @param {Array} props.users - Array de objetos de usuario (deben tener .username)
- * @param {Function} props.onClose - Función para cerrar el modal
+ * @param {string} props.title - Titulo del modal (ej: "Seguidores")
+ * @param {{ username: string }[]} props.users - Lista de usuarios a mostrar.
+ * @param {Function} props.onClose - Funcion para cerrar el modal.
+ * @returns {JSX.Element}
  */
 export default function UserListModal({ title, users, onClose }) {
-  const { user: loggedInUser } = useAuth(); // Obtienes al usuario logueado
+  const { user: loggedInUser } = useAuth();
 
-
-  // Evita que el clic dentro del modal lo cierre
+  /**
+   * Evita que el clic dentro del modal cierre el dialogo.
+   * @param {React.MouseEvent} e
+   */
   const handleModalContentClick = (e) => {
     e.stopPropagation();
   };
 
-
   return (
-    // El fondo oscuro que cubre la pantalla
+    // Fondo que cubre la pantalla
     <div className="modal-backdrop" onClick={onClose}>
-      {/* El contenedor del modal en sí */}
+      {/* Contenedor del modal */}
       <div className="modal-content" onClick={handleModalContentClick}>
         <div className="modal-header">
           <h3 className="modal-title">{title}</h3>
           <button className="modal-close-btn" onClick={onClose}>
-            &times; {/* Este es el símbolo 'x' */}
+            &times;
           </button>
         </div>
-
 
         <div className="modal-body">
           {users.length > 0 ? (
             <ul className="user-list">
               {users.map((user) => {
-                // Comprueba si el usuario de la lista es el mismo que el logueado
                 const isMe = user.username === loggedInUser?.username;
-
-
-                // Cambia el enlace de perfil a /me si el usuario es el logueado
                 const profileLink = isMe ? "/me" : `/profile/${user.username}`;
-
 
                 return (
                   <li key={user.username} className="user-list-item">
-                    {/* Usa el enlace dinámico */}
                     <Link to={profileLink} onClick={onClose}>
                       {user.username}
                     </Link>
