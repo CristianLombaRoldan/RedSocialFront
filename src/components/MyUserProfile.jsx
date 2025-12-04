@@ -93,7 +93,7 @@ export default function MyUserProfile() {
       setTimeout(() => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        window.location.replace("/login");
+        window.location.replace("/");
       }, 2000);
     } catch (err) {
       const rawMsg = typeof err?.message === "string" ? err.message : "";
