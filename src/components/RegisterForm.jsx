@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "../api/auth";
 import { useNavigate, Link } from "react-router-dom";
+import "../social.css";
 
 /**
  * Datos que se envian en el formulario de registro.

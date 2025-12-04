@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useMemo } from "react";
+import "../social.css";
 
 /**
  * Datos que se envian en el formulario de login.
