@@ -10,7 +10,7 @@ import { useNavigate, Link } from "react-router-dom";
  * @typedef {Object} RegisterFormValues
  * @property {string} username - Nombre de usuario.
  * @property {string} email - Correo electronico.
- * @property {string} password - Contrasena del usuario.
+ * @property {string} password - Contraseña del usuario.
  */
 
 /**
@@ -112,7 +112,7 @@ export default function RegisterForm() {
           <p className="field-error">{errors.email.message}</p>
         )}
 
-        <label htmlFor="password">Contrasena</label>
+        <label htmlFor="password">Contraseña</label>
         <input
           id="password"
           type="password"
@@ -120,10 +120,10 @@ export default function RegisterForm() {
           placeholder="Minimo 6 caracteres"
           autoComplete="new-password"
           {...register("password", {
-            required: "La contrasena es obligatoria.",
+            required: "La contraseña es obligatoria.",
             minLength: {
               value: 6,
-              message: "La contrasena debe tener al menos 6 caracteres.",
+              message: "La contraseña debe tener al menos 6 caracteres.",
             },
           })}
           disabled={isDisabled}
