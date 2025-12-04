@@ -375,3 +375,10 @@ h1, h2, h3, h4 {
   transform: translateY(50px);
 }
 
+.field-error{
+  color: red;
+}
+
+.error-text{
+  color: red;
+}
